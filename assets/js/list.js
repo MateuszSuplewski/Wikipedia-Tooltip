@@ -47,48 +47,49 @@ const list = [
 ];
 
 const listSection = document.querySelector('.article__list');
-
 if (list) {
     const list = document.createElement('ul');
     listSection.appendChild(list);
 }
 
-list.forEach((element) => {
-    if (element.parentId === null) {
-        const list = document.querySelector('ul'); //
-        const listItem = document.createElement('li');
-        const link = document.createElement('a');
+list.forEach((item) => {
 
-        listItem.dataset.id = element.id; //
-        link.href = element.link;
-        link.innerText = element.text;
-        list.appendChild(listItem);
-        listItem.appendChild(link);
+    if (item.parentId === null) {
+        const list = listSection.querySelector('ul'); //
+        const listItem = createListItem(list, item);
+        listItem.dataset.id = item.id; //
     }
-})
+
+});
 
 const itemsList = listSection.querySelectorAll('li');
 
-itemsList.forEach((element) => {
-    const id = Number(element.dataset.id);
+itemsList.forEach((item) => {
+    const id = Number(item.dataset.id);
+    const children = getChildren(list, id);
+    if (children.length !== 0) {
+        const childList = document.createElement('ul'); //
+        item.appendChild(childList); //
 
-    const children = list.filter(function (element2) {
-        return element2.parentId === id;
-    });
-
-    if (children) {
-        const lister = document.createElement('ul'); //
-        element.appendChild(lister);
-
-        children.forEach((element3) => {
-            const listItem = document.createElement('li');
-            const link = document.createElement('a');
-
-            link.href = element3.link;
-            link.innerText = element3.text;
-            lister.appendChild(listItem);
-            listItem.appendChild(link);
+        children.forEach((childItem) => {
+            const listItem = createListItem(childList, childItem);
         });
     }
 });
 
+function createListItem(list, item) {
+    const listItem = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = item.link;
+    link.innerText = item.text;
+    list.appendChild(listItem);
+    listItem.appendChild(link);
+    return listItem;
+}
+
+function getChildren(list, id) {
+    const children = list.filter(function (childItem) {
+        return childItem.parentId === id;
+    });
+    return children;
+}
